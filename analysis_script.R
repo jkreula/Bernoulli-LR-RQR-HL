@@ -25,7 +25,7 @@ curr_dir <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(curr_dir)
 
 # Directory for figures
-fig_folder <- file.path(curr_dir,"Figures")
+fig_folder <- file.path(curr_dir,"Figures/")
 if(!dir.exists(fig_folder))
   dir.create(fig_folder)
 
@@ -109,7 +109,7 @@ sbps <- ddply(heartd,"hd",summarise,sbps.mean=mean(sbp))
 # Get mean bmi for each heart disease status
 bmis <- ddply(heartd,"hd",summarise,bmis.mean=mean(bmi))
 
-pdf(file = "hd_density_age.pdf", # Change name of file according to variable
+pdf(file = paste0(fig_folder,"hd_density_age.pdf"), # Change name of file according to variable
     width = 9, 
     height = 7, 
     family = "Palatino")
@@ -157,7 +157,7 @@ summary_group_F <- dplyr::summarise(group_F,
 
 # Decile plot for age. Change age for other variables when needed
 plot.new()
-pdf(file = "decile_plot_age.pdf",width = 9, height = 7, family = "Palatino")
+pdf(file = paste0(fig_folder,"decile_plot_age.pdf"),width = 9, height = 7, family = "Palatino")
 par(mfrow = c(1,1))
 par(mar=c(5,5,2,2))
 plot(hd_rate ~ variable, 
@@ -250,7 +250,7 @@ grouped_df_means <- dplyr::summarise(grouped_df,
 ################### CREATE DEVIANCE RESIDUAL PLOTS ##########################
 #scale = 1.35
 #font_scaler = font_scaler * scale
-pdf(file = "std_deviance_residuals.pdf",
+pdf(file = paste0(fig_folder,"std_deviance_residuals.pdf"),
     width = 9, 
     height = 4.2, 
     family = "Palatino")
@@ -293,7 +293,7 @@ group_mean_count <- dplyr::summarise(grouped_data,
                                             residuals=mean(residuals),
                                             count=n())
 # Plot deviance residuals against individual predictors
-pdf(file = "devres_age.pdf", # Change file name if needed
+pdf(file = paste0(fig_folder,"devres_age.pdf"), # Change file name if needed
     width = 9, 
     height = 7, 
     family = "Palatino")
@@ -313,7 +313,7 @@ dev.off()
 
 ################### CREATE QUANTILE RESIDUAL PLOTS ##########################
 # Plot quantile residuals
-pdf(file = "quantile_residual_plots_2.pdf",
+pdf(file = paste0(fig_folder,"quantile_residual_plots_2.pdf"),
     width = 9, 
     height = 3, 
     family = "Palatino")
@@ -385,7 +385,7 @@ step(lmod_final) # Make sure this model has lowest AIC
 q_vars_update <- length(coef(lmod_final))
 cook_threshold_update <- 8 / (dim(heartd_no_outs)[1] - 2*q_vars_update)
 # Plot Cook's distance
-pdf(file = "cooks_distance.pdf",
+pdf(file = paste0(fig_folder,"cooks_distance.pdf"),
     width = 9, 
     height = 7, 
     family = "Palatino")
@@ -455,7 +455,7 @@ hldf <- dplyr::summarise(gdf_HL,
 hldf <- mutate(hldf, se.fit=sqrt(ppred*(1-ppred)/count))
 
 # Plot graphical goodness of fit test
-pdf(file = "predicted_prob_20.pdf", # Change name if needed
+pdf(file = paste0(fig_folder,"predicted_prob_20.pdf"), # Change name if needed
     width = 9, 
     height = 7, 
     family = "Palatino")
@@ -495,7 +495,7 @@ bmi_mean <- mean(heartd$bmi) # Note that bmi is centralised, so this is 0
 # Auxiliary variable for sbp for plotting purposes
 sbp <- seq(100,250,20)
 # Centralise auxiliary variable to correspond to regression coefficients
-sbp_central <- sbp - mean_sbp
+sbp_central <- sbp - mean(heartd$sbp)
 
 # Female heart disease sbp linear predictor
 eta_female_sbp <- beta[1] + 
@@ -515,7 +515,7 @@ male_sbp_int_hat_prob <- logistic(eta_male_sbp_int)
 
 ############### PLOT PREDICTED PROBABILITY VERSUS SBP ########################
 font_scaler = font_scaler * 1.35
-pdf(file = "interpretations.pdf",
+pdf(file = paste0(fig_folder,"interpretations.pdf"),
     width = 9, 
     height = 7, 
     family = "Palatino")
